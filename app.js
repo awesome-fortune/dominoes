@@ -55,9 +55,7 @@ const domino = {
         break;
     }
   },
-  addTileToPlayerHand: (tile, player) => {
-    player.tilesOnHand.push(tile);
-  },
+  addTileToPlayerHand: (tile, player) => player.tilesOnHand.push(tile),
   removeTileFromPlayerHand: (player, tileIndex) => player.tilesOnHand.splice(tileIndex, 1)[0],
   getBoardState: () => {
     let result = '';
@@ -92,19 +90,18 @@ const domino = {
       };
     } else if (secondTile[1] === playerTile[0]) {
       return {
-        position: boardPlayPosition.head,
+        position: boardPlayPosition.tail,
         inverted: false
       };
     } else if (secondTile[1] === playerTile[1]) {
       return {
-        position: boardPlayPosition.head,
+        position: boardPlayPosition.tail,
         inverted: true
       };
     }
 
     return null;
   },
-  invertTile: (tile) => tile.reverse(),
   startGameLoop: async () => {
     let winner = null;
     let playerOne = {
@@ -169,7 +166,7 @@ const domino = {
 
             if (positionToMovePlayerTile) {
 
-              tileFromBoneyard = positionToMovePlayerTile.inverted ? domino.invertTile(tileFromBoneyard) : tileFromBoneyard;
+              tileFromBoneyard = positionToMovePlayerTile.inverted ? tileFromBoneyard.reverse() : tileFromBoneyard;
 
               domino.placeTileOnBoard(tileFromBoneyard, positionToMovePlayerTile.position);
 
@@ -195,7 +192,7 @@ const domino = {
 
           if (positionToMovePlayerTile) {
             let tileToMove = domino.removeTileFromPlayerHand(currentPlayer, playerTileIndex);
-            tileToMove = positionToMovePlayerTile.inverted ? domino.invertTile(tileToMove) : tileToMove;
+            tileToMove = positionToMovePlayerTile.inverted ? tileToMove.reverse() : tileToMove;
 
             domino.placeTileOnBoard(tileToMove, positionToMovePlayerTile.position)
 
@@ -217,6 +214,8 @@ const domino = {
           if (currentPlayer.tilesOnHand.length === 0) {
             gameInProgress = false;
             winner = currentPlayer;
+
+            console.log(`${currentPlayer.name} has won...game over!`);
           }
 
           currentPlayer = currentPlayer === playerOne ? playerTwo : playerOne;
